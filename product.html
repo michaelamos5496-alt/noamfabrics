@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fabric — Noam Fabrics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="product">
+
+<header class="site-header">
+  <a class="logo" href="index.html" aria-label="Noam Fabrics — home">noam</a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="shop.html">Shop</a>
+    <a href="index.html#materials">Materials</a>
+    <button type="button" data-cart-open>Cart (<span data-cart-count>0</span>)</button>
+  </nav>
+</header>
+
+<main class="page">
+  <div data-product></div>
+  <section class="related">
+    <h2 class="related__title label">You may also like</h2>
+    <div class="grid" data-related></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <a class="logo" href="index.html">noam</a>
+  <nav class="label" aria-label="Footer">
+    <a href="shop.html">Shop</a>
+    <a href="index.html#materials">Materials</a>
+    <a href="#">Shipping &amp; returns</a>
+    <a href="#">Contact</a>
+  </nav>
+  <p class="label">© 2026 Noam Fabrics · Dress your vision</p>
+</footer>
+
+<script src="js/products.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

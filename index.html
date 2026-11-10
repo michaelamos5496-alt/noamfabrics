@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noam Fabrics — bold prints, timeless style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="home" data-page="home">
+
+<header class="site-header">
+  <a class="logo" href="index.html" aria-label="Noam Fabrics — home">noam</a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="shop.html">Shop</a>
+    <a href="index.html#materials">Materials</a>
+    <button type="button" data-cart-open>Cart (<span data-cart-count>0</span>)</button>
+  </nav>
+</header>
+
+<main>
+<!-- screen 1 · hero -->
+<section class="screen hero">
+  <p class="hero__eyebrow label">Bold prints · Timeless style</p>
+
+  <div class="hero__center">
+    <h1 class="logo">noam</h1>
+    <p class="hero__lead">Quality fabrics for every story</p>
+  </div>
+
+  <ul class="hero__cats" aria-label="Fabric categories">
+    <li><a class="label" href="shop.html?category=adire">Adire</a></li>
+    <li><a class="label" href="shop.html?category=ankara">Ankara</a></li>
+    <li><a class="label" href="shop.html?category=kente">Kente &amp; African Prints</a></li>
+    <li><a class="label" href="shop.html?category=more">And More</a></li>
+  </ul>
+</section>
+
+<!-- screen 2 · fabric panels (filled from js/products.js) -->
+<section class="screen strip" id="fabrics" aria-label="Fabrics">
+  <div class="strip__track" data-strip tabindex="0"></div>
+</section>
+
+<!-- screen 3 · materials -->
+<section class="screen materials" id="materials">
+  <h2 class="materials__title reveal"><b>Materials</b><br>that define quality</h2>
+  <p class="materials__text reveal">At Noam Fabrics, we bring you the finest Ankara, Adire and more — beautiful fabrics for stylish looks, unique designs and endless possibilities.</p>
+  <a class="text-link label reveal" href="shop.html">Explore the fabrics</a>
+</section>
+</main>
+
+<footer class="site-footer">
+  <a class="logo" href="index.html">noam</a>
+  <nav class="label" aria-label="Footer">
+    <a href="shop.html">Shop</a>
+    <a href="index.html#materials">Materials</a>
+    <a href="#">Shipping &amp; returns</a>
+    <a href="#">Contact</a>
+  </nav>
+  <p class="label">© 2026 Noam Fabrics · Dress your vision</p>
+</footer>
+
+<script src="js/products.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
