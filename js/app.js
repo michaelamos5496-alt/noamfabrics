@@ -22,6 +22,21 @@
     });
   };
 
+  /* ---------------- order by WhatsApp ---------------- */
+  var WHATSAPP = "233555593743";   // +233 55 559 3743, digits only for wa.me
+  function orderMessage() {
+    var total = 0;
+    var rows = cart.map(function (l, i) {
+      var p = byId(l.id);
+      var sum = priceOf(p) * l.qty;
+      total += sum;
+      return (i + 1) + ". " + p.name + " (" + catShort(p.category) + ") - " +
+        qtyLabel(p, l.qty) + " - " + money.format(sum);
+    });
+    return "Hello Noam Fabrics, I would like to order:\n\n" + rows.join("\n") +
+      "\n\nSubtotal: " + money.format(total) + "\n\nName:\nDelivery location:";
+  }
+
   /* ---------------- cart store ---------------- */
   var KEY = "noam-cart";
   var cart = (function () {
@@ -58,8 +73,8 @@
         '<div class="drawer__body"></div>' +
         '<div class="drawer__foot">' +
           '<div class="drawer__total"><span>Subtotal</span><span data-cart-total></span></div>' +
-          '<p class="drawer__note">Shipping and taxes are calculated at checkout.</p>' +
-          '<button class="btn" data-checkout>Checkout</button>' +
+          '<p class="drawer__note">Your order opens in WhatsApp for you to send. We confirm delivery and payment there.</p>' +
+          '<button class="btn" data-checkout>Order on WhatsApp</button>' +
         '</div>' +
       '</aside>';
     while (wrap.firstChild) document.body.appendChild(wrap.firstChild);
@@ -119,8 +134,8 @@
       }
 
       if (t.closest("[data-checkout]")) {
-        // Checkout is not connected to a payment provider yet.
-        t.closest("[data-checkout]").textContent = "Checkout coming soon";
+        // no payment provider: the cart is sent as a WhatsApp message
+        if (cart.length) window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(orderMessage()), "_blank", "noopener");
       }
     });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") openCart(false); });
@@ -142,13 +157,48 @@
     if (!track) return;
 
     // one panel per category, using that category's first fabric as the picture
-    track.innerHTML = data.categories.map(function (c) {
+    track.innerHTML = data.categories.filter(function (c) { return c.strip !== false; }).map(function (c) {
       var first = data.products.filter(function (p) { return p.category === c.id; })[0];
       return '<a class="panel" href="shop.html?category=' + encodeURIComponent(c.id) + '" draggable="false">' +
         (first ? '<img src="' + esc(c.image || first.image) + '" alt="' + esc(c.name) + '" loading="lazy" draggable="false">' : '') +
         '<span class="panel__bar"><span class="panel__name">' + esc(c.name) + '</span>' +
-        '<span class="panel__pill">Shop</span></span></a>';
+        '<span class="panel__pill">' + (first ? 'Shop' : 'Soon') + '</span></span></a>';
     }).join("");
+
+    // slide indicator: arrows, one tick per panel and a hint; hidden when nothing overflows
+    var panels = $$(".panel", track);
+    var nav = document.createElement("div");
+    nav.className = "strip__nav";
+    nav.innerHTML =
+      '<button class="strip__arrow strip__arrow--prev" data-dir="-1" aria-label="Previous fabrics">&larr;</button>' +
+      '<button class="strip__arrow strip__arrow--next" data-dir="1" aria-label="More fabrics">&rarr;</button>' +
+      '<div class="strip__hint" aria-hidden="true">' +
+        '<span class="label"><span class="strip__hint-drag">Drag</span><span class="strip__hint-swipe">Swipe</span> to explore</span>' +
+        '<span class="strip__ticks">' + panels.map(function () { return "<i></i>"; }).join("") + '</span>' +
+        '<span class="label strip__count"></span>' +
+      '</div>';
+    track.parentNode.appendChild(nav);
+    var ticks = $$(".strip__ticks i", nav);
+    var two = function (n) { return (n < 10 ? "0" : "") + n; };
+    function step() { return panels.length > 1 ? panels[1].offsetLeft - panels[0].offsetLeft : track.clientWidth; }
+    function syncNav() {
+      var max = track.scrollWidth - track.clientWidth;
+      nav.hidden = max <= 1;
+      if (nav.hidden) return;
+      var at = track.scrollLeft;
+      var i = at >= max - 2 ? panels.length - 1 : Math.min(panels.length - 1, Math.round(at / step()));
+      ticks.forEach(function (t, k) { t.className = k === i ? "is-on" : ""; });
+      $(".strip__count", nav).textContent = two(i + 1) + " / " + two(panels.length);
+      $(".strip__arrow--prev", nav).disabled = at <= 2;
+      $(".strip__arrow--next", nav).disabled = at >= max - 2;
+    }
+    nav.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-dir]");
+      if (b) track.scrollBy({ left: Number(b.getAttribute("data-dir")) * step(), behavior: "smooth" });
+    });
+    track.addEventListener("scroll", syncNav, { passive: true });
+    window.addEventListener("resize", syncNav);
+    syncNav();
 
     // drag to scroll with a mouse; touch and trackpads scroll natively
     var startX = 0, startLeft = 0, down = false, moved = false;

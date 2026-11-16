@@ -106,12 +106,36 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   height: 100svh;
   padding: clamp(18px, 3.9vw, 62px) var(--pad) clamp(22px, 4.1vw, 60px);
   text-align: center;
+  /* still image sits under the video: shown while it loads, and for reduced motion */
   background-image:
-    linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 60%, rgba(10,6,3,.6) 100%),
     url("../assets/hero.jpg"),
     linear-gradient(100deg, #3a2a1b 0%, #4a3624 45%, #a68c6c 75%, #6d5740 100%);
 }
-.hero__eyebrow { color: rgba(255, 255, 255, .82); padding-top: 2px; }
+.hero__video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+}
+/* darkening wash over the video so the type stays legible */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 46% 40% at 50% 48%, rgba(10,6,3,.5) 0%, rgba(10,6,3,0) 100%),
+    linear-gradient(to bottom, rgba(12,8,5,.62) 0%, rgba(12,8,5,.36) 30%, rgba(12,8,5,.4) 62%, rgba(10,6,3,.8) 100%);
+}
+.hero > :not(.hero__video) { position: relative; z-index: 2; }
+@media (prefers-reduced-motion: reduce) { .hero__video { display: none; } }
+.hero { text-shadow: 0 1px 24px rgba(0, 0, 0, .55); }
+.hero__eyebrow { color: rgba(255, 255, 255, .9); padding-top: 2px; }
 .hero__center { margin-top: -2vh; }
 .hero .logo {
   font-size: min(17vw, 30vh);
@@ -137,7 +161,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ==========================================================
    HOME · screen 2 — horizontal strip of tall fabric panels
    ========================================================== */
-.strip { height: 100svh; background: var(--slate); }
+.strip { position: relative; height: 100svh; background: var(--slate); }
 .strip__track {
   display: flex;
   gap: 3px;
@@ -155,7 +179,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 .panel {
   position: relative;
-  flex: 1 1 0;
+  flex: 1 0 40vw;   /* wider than a third of the screen, so the strip slides */
   min-width: 0;
   height: 100%;
   overflow: hidden;
@@ -211,38 +235,124 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .panel:hover .panel__pill { background: #fff; color: #1b1410; }
 
+/* slide indicator (built in js/app.js) */
+.strip__nav[hidden] { display: none; }
+.strip__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 54px;
+  height: 54px;
+  margin-top: -27px;
+  border-radius: 50%;
+  background: rgba(20, 16, 13, .55);
+  border: 1px solid rgba(255, 255, 255, .45);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background .25s, color .25s, opacity .25s;
+}
+.strip__arrow--prev { left: clamp(12px, 2vw, 30px); }
+.strip__arrow--next { right: clamp(12px, 2vw, 30px); }
+.strip__arrow:hover { background: #fff; color: #1b1410; }
+.strip__arrow[disabled] { opacity: 0; pointer-events: none; }
+.strip__hint {
+  position: absolute;
+  left: 50%;
+  top: clamp(84px, 9vw, 120px);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(20, 16, 13, .6);
+  color: #fff;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.strip__hint-swipe { display: none; }
+@media (hover: none) {
+  .strip__hint-drag { display: none; }
+  .strip__hint-swipe { display: inline; }
+}
+.strip__ticks { display: flex; gap: 5px; }
+.strip__ticks i { width: 22px; height: 2px; background: rgba(255, 255, 255, .35); transition: background .3s; }
+.strip__ticks i.is-on { background: #fff; }
+
 /* ==========================================================
-   HOME · screen 3 — materials
+   HOME · screen 3 — contact
    ========================================================== */
-.materials {
+.contact {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: max(100svh, 56vw);
-  padding: 0 var(--pad);
+  min-height: max(100svh, 56vw);
+  padding: clamp(90px, 9vw, 150px) var(--pad) clamp(60px, 7vw, 110px);
   text-align: center;
   background-image:
-    linear-gradient(rgba(0,0,0,.12), rgba(0,0,0,.12)),
-    url("../assets/materials.jpg"),
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(12,8,5,.55) 0%, rgba(12,8,5,0) 100%),
+    linear-gradient(rgba(12,8,5,.7), rgba(12,8,5,.7)),
+    url("../assets/materials-collage.jpg"),
     linear-gradient(115deg, #2c1a12 0%, #6b4a2b 30%, #9a5a2a 52%, #4a2c1e 75%, #1d120d 100%);
 }
-.materials__title {
+.contact__eyebrow { color: rgba(255, 255, 255, .8); }
+.contact__title {
+  margin-top: 14px;
   text-transform: uppercase;
-  font-size: clamp(22px, 3.4vw, 58px);
+  font-size: clamp(26px, 3.4vw, 58px);
   line-height: 1.06;
   letter-spacing: .012em;
   font-weight: 300;
   color: #fff;
 }
-.materials__title b { font-weight: 600; }
-.materials__text {
-  max-width: 34em;
-  margin-top: clamp(40px, 10vw, 170px);
-  font-size: clamp(12px, 1.2vw, 18px);
-  line-height: 1.4;
+.contact__title b { font-weight: 600; }
+.contact__text {
+  max-width: 32em;
+  margin-top: clamp(14px, 1.6vw, 26px);
+  font-size: clamp(13px, 1.2vw, 18px);
+  line-height: 1.45;
   color: rgba(255, 255, 255, .84);
 }
+.contact__list {
+  display: flex;
+  justify-content: center;
+  width: min(100%, 420px);
+  margin-top: clamp(34px, 5vw, 80px);
+  border-top: 1px solid rgba(255, 255, 255, .28);
+  border-bottom: 1px solid rgba(255, 255, 255, .28);
+  list-style: none;
+}
+.contact__list li {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(18px, 2.2vw, 34px) 12px;
+}
+.contact__list li + li { border-left: 1px solid rgba(255, 255, 255, .28); }
+.contact__list .label { color: rgba(255, 255, 255, .7); }
+.contact__list a {
+  font-size: clamp(15px, 1.5vw, 22px);
+  color: #fff;
+  overflow-wrap: anywhere;
+  transition: color .25s;
+}
+.contact__list a:hover { color: var(--accent); }
+.contact__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(34px, 5vw, 80px);
+}
+.contact__cta .label { color: rgba(255, 255, 255, .8); }
 .text-link {
   display: inline-block;
   margin-top: clamp(18px, 2vw, 34px);
@@ -463,6 +573,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .site-footer .logo { font-size: 26px; }
 .site-footer nav { display: flex; flex-wrap: wrap; gap: 10px 28px; }
 .site-footer a:hover { color: #fff; }
+.site-footer__legal { text-align: right; line-height: 1.9; }
+.site-footer__legal a { color: var(--ink-soft); border-bottom: 1px solid currentColor; padding-bottom: 1px; }
 
 /* ==========================================================
    Motion + small screens
@@ -475,11 +587,18 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @media (max-width: 720px) {
   .hero__cats { flex-wrap: wrap; justify-content: center; gap: 2px 22px; }
   .hero .logo { font-size: 26vw; }
-  .hero { padding-top: 64px; background-position: 68% center; }
+  .hero { padding-top: 64px; background-position: 42% center; }
+  .hero__video { object-position: 42% center; }
 
   .panel { flex: 0 0 78vw; }
+  .site-footer__legal { text-align: left; }
+  .strip__arrow { display: none; }
+  .strip__hint { top: 76px; gap: 10px; padding: 8px 14px; }
+  .strip__ticks i { width: 14px; }
 
-  .materials { height: 100svh; }
+  .contact { min-height: 100svh; }
+  .contact__list { flex-direction: column; }
+  .contact__list li + li { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .28); }
 
   .product { grid-template-columns: 1fr; }
   .product__media { width: min(100%, 360px); margin: 0 auto; }
