@@ -156,6 +156,13 @@
     var track = $("[data-strip]");
     if (!track) return;
 
+    // reduced motion: keep the hero video on its first frame instead of playing
+    var heroVideo = $(".hero__video");
+    if (heroVideo && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      heroVideo.removeAttribute("autoplay");
+      heroVideo.pause();
+    }
+
     // one panel per category, using that category's first fabric as the picture
     track.innerHTML = data.categories.filter(function (c) { return c.strip !== false; }).map(function (c) {
       var first = data.products.filter(function (p) { return p.category === c.id; })[0];
