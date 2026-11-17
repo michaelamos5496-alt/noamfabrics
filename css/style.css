@@ -597,7 +597,17 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .contact__list { flex-direction: column; }
   .contact__list li + li { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .28); }
 
+  /* shop: 2 across on phones, 3 on wider phones / landscape */
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 10px; }
+  .card__row { flex-direction: column; gap: 2px; margin-top: 10px; }
+  .card__name { font-size: 13px; }
+  .card__price { font-size: 12px; }
+  .card__cat { font-size: 10px; letter-spacing: .1em; }
+
   .product { grid-template-columns: 1fr; }
   .product__media { width: min(100%, 360px); margin: 0 auto; }
   .product__info { position: static; }
+}
+@media (min-width: 540px) and (max-width: 720px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
